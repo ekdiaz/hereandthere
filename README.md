@@ -1,5 +1,5 @@
 # hereandthere
-Make a homepage with your distant friends.
+Make a homepage with your distant friends. https://hereandthere.pythonanywhere.com
 
 Hereandthere makes a homepage with your distant friends where you can view
 local times and weather, send messages, and set a background slideshow.

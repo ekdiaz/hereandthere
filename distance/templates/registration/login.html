@@ -1,0 +1,20 @@
+{% extends 'distance/base.html' %}
+
+{% block content %}
+<!--Login page-->
+    <head>
+        <title>
+            Login
+        </title>
+    </head>
+    <div class="form">
+        <form method="post" class="white-background">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="button right-align">Login</button>
+            <a href={% url 'password_reset' %} class="button right-align small-btn">Forgot your password?</a>
+            <a href={% url 'distance:signup' %} class="button right-align small-btn">Don't have a login? Signup</a>
+        </form>
+
+    </div>
+{% endblock %}

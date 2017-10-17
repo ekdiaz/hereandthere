@@ -1,0 +1,32 @@
+{% extends 'distance/base.html' %}
+
+{% block content %}
+<!--Settings page-->
+    <head>
+        <title>
+            Settings
+        </title>
+    </head>
+    <h3>Settings:</h3>
+    <div class="container">
+        <div class="white-background signup">
+            <!--Form to change settings-->
+            <form method="post" action={% url 'distance:settings_set' %}>
+                {% csrf_token %}
+                {% for field in form %}
+                    <p>
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small style="color: white">{{ field.help_text|safe }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                    </p>
+                {% endfor %}
+                <button type="submit" class="button small-btn right-align">Change settings</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

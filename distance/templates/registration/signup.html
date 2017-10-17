@@ -1,0 +1,46 @@
+{% extends 'distance/base.html' %}
+{% block content %}
+<!--Signup page-->
+<head>
+    <title>
+        Sign Up
+    </title>
+</head>
+<!--Get location so user doesn't have to know latitude and longitude-->
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        document.getElementById("id_lat").value = "";
+        document.getElementById("id_lng").value = "";
+    }
+}
+function showPosition(position) {
+    document.getElementById("id_lat").value = position.coords.latitude;
+    document.getElementById("id_lng").value = position.coords.longitude;
+}
+</script>
+<body onload="getLocation()">
+<div class="container">
+  <h3>Sign up</h2>
+  <div class="white-background signup">
+      <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <p>
+                    {{ field.label_tag }}<br>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color: white">{{ field.help_text|safe }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                </p>
+            {% endfor %}
+            <button type="submit" class="button small-btn right-align">Sign up</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

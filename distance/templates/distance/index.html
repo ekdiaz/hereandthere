@@ -1,0 +1,17 @@
+{% extends 'distance/base.html' %}
+
+{% block content %}
+<!--Home page-->
+<head>
+    <title>
+        Home
+    </title>
+</head>
+<!--Enable user to search for a friend's username-->
+<div class="form">
+    <form action={% url 'distance:search_friends' %} method="get" class="white-background">
+        <input type="text" name="search_friends" class="textbox">
+        <input type="submit" value="FIND FRIEND" class="button small-btn">
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,179 @@
+{% extends 'distance/base.html' %}
+{% block more_links %}
+<!--Script to show textbox2-->
+<script>
+    function ShowTextbox()
+    {
+        var textbox = document.getElementById("textbox2");
+        if (textbox.style.display == "inline")
+        {
+            textbox.style.display = "none";
+        }
+        else
+        {
+            textbox.style.display = "inline";
+        }
+    }
+</script>
+<!--Enable user to add and delete images from the friend view page-->
+<div id="del_images">
+    <div class="button" id="img-desktop" onclick="ShowTextbox()">IMAGES</div>
+    <div id="textbox2">
+        <div id="image-scroll">
+            {% for img in images %}
+                <form method="post" action={% url "distance:del_img" friend.id %} class="white-background small">{% csrf_token %}
+                    <div class="img-cell">
+                        <img src="{{ img }}" alt="" class="img-preview">
+                        <input type="submit" value="X" class="button small-X top-left" name="{{ img }}">
+                    </div>
+                </form>
+            {% endfor %}
+        </div>
+        <div id="add-image">
+            <form method="POST" action={% url 'distance:image_confirm' friend.id %} class="white-background" id="add_images">{% csrf_token %}
+                <input type="url" name="image_url" class="textbox" required id="image_url">
+                <input type="submit" value="SUBMIT" class="button small-btn">
+            </form>
+        </div>
+    </div>
+</div>
+<a href="{% url 'distance:add_images' friend.id %}" class="button menu-btn" id="img-mobile">IMAGES</a>
+{% endblock %}
+{% block content %}
+<!--Friend View page-->
+<head>
+    <title>
+        {{ friend.username }}
+    </title>
+</head>
+
+<body onload="startTime()">
+<!--Script to start clocks on site-->
+<script>
+function startTime() {
+    var today1 = new Date();
+    var today2 = new Date();
+    var h = today1.getUTCHours();
+    var m = today1.getUTCMinutes();
+    var s = today1.getUTCSeconds();
+    today1.setHours(h + {{ hr_offset1 }});
+    today1.setMinutes(m + {{ min_offset1 }});
+    today2.setHours(h + {{ hr_offset2 }});
+    today2.setMinutes(m + {{ min_offset2 }});
+
+    var h1 = today1.getHours();
+    var m1 = today1.getMinutes();
+
+    var h2 = today2.getHours();
+    var m2 = today2.getMinutes();
+
+    var s = today1.getSeconds();
+
+    h1 = checkTime(h1);
+    m1 = checkTime(m1);
+
+    h2 = checkTime(h2);
+    m2 = checkTime(m2);
+    s = checkTime(s);
+
+    document.getElementById('date1').innerHTML =
+    today1.toDateString();
+    document.getElementById('date2').innerHTML =
+    today2.toDateString();
+
+    document.getElementById('clock1').innerHTML =
+    h1 + ":" + m1 + ":" + s;
+    document.getElementById('clock2').innerHTML =
+    h2 + ":" + m2 + ":" + s;
+    var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
+</script>
+
+<!--Main content, contains user1, user2, messaging, and background images-->
+<div class="slideshow-container">
+    <div id="user1">
+        <div class="underline">{{ user.username }}</div>
+        <div>{{ city1 }}, {{ country1 }}</div>
+        <div id="date1"></div>
+        <div id="clock1"></div>
+        <div id="temp1">{{ temp1 }} {{ status1 }}</div>
+    </div>
+    <div id="right-side">
+        <div id="user2">
+            <div class="underline">{{ friend.username }}</div>
+            <div>{{ city2 }}, {{ country2 }}</div>
+            <div id="date2"></div>
+            <div id="clock2"></div>
+            <div id="temp2">{{ temp2 }} {{ status2 }}</div>
+        </div>
+        <div class="messaging">
+            <form method="post" action={% url "distance:send_msg_f" friend.id %} class="white-background small">{% csrf_token %}
+                <div class="msgs_friend">
+                    <div class="content">
+                        {% for msg in msg_list %}
+
+                            <div class="underline">
+                                {{ msg.sender }}:
+                                <div id="created_at">
+                                    {{ msg.created_at }}
+                                </div>
+                            </div>
+                            <input type="submit" value="X" class="button small-X" name="{{ msg.id }}FX">
+                            <div class="wrap">{{ msg.msg_content }}</div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="reply">
+                    <textarea placeholder="Enter message here..." name="msg" id="msg"></textarea><br>
+                    <div class="text-right">
+                        <input type="submit" value="Send" class="button" name="{{ msg.id }}FR">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if images %}
+        {% block images %}
+            {% for image in images %}
+                <div class="mySlides fade">
+                    <img src={{ image }} style="width:100%" alt="" class="background">
+                </div>
+            {% endfor %}
+        {% endblock %}
+    {% else %}
+        <img src={% url "distance:background" %} style="width:100%" alt="" class="background">
+    {% endif %}
+</div>
+<!--Script to display image slideshow-->
+{% if images %}
+    <script>
+        var slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+
+            for (i = 0; i < slides.length; i++)
+            {
+               slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex> slides.length)
+            {
+                slideIndex = 1
+            }
+            slides[slideIndex-1].style.display = "block";
+            setTimeout(showSlides, 5000); // Change image every 5 seconds
+        }
+    </script>
+{% endif %}
+
+
+</body>
+{% endblock %}

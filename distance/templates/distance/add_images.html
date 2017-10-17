@@ -1,0 +1,29 @@
+{% extends 'distance/base.html' %}
+
+{% block content %}
+<!--Add images page-->
+<head>
+    <title>
+        Add Images
+    </title>
+</head>
+<!--Enables user to see and delete images-->
+<div id="image-scroll">
+    {% for img in images %}
+        <form method="post" action={% url "distance:del_img" friend.id %} class="white-background small">{% csrf_token %}
+            <div class="img-cell">
+                <img src="{{ img }}" alt="" class="img-preview">
+                <input type="submit" value="X" class="button small-X top-left" name="{{ img }}">
+            </div>
+        </form>
+    {% endfor %}
+</div>
+<!--Enables user to add images-->
+<div id="add-image">
+    <form method="POST" action={% url 'distance:image_confirm' friend.id %} class="white-background" id="add_images">{% csrf_token %}
+        <input type="url" name="image_url" class="textbox" required id="image_url">
+        <input type="submit" value="SUBMIT" class="button small-btn">
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'distance/base.html' %}
+{% block content %}
+<!--Friends page-->
+    <head>
+        <title>
+            Friends
+        </title>
+    </head>
+    <h3>Friends:</h3>
+    <!--Enable user to delete friends-->
+    {% for friend in friends_list %}
+        <form method="post" action={% url 'distance:del_friend' %}>{% csrf_token %}
+            <input type="submit" value="X" class="button small-btn" name="{{ friend.id }}">
+            <a href="{% url 'distance:friend_view' friend.id %}" class="button small-btn div-inline">{{ friend.username }}</a></li>
+        </form>
+    {% endfor %}
+{% endblock %}

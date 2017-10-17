@@ -1,0 +1,106 @@
+<!--Setup-->
+{% load static %}
+<link href="https://fonts.googleapis.com/css?family=Kanit:200" rel="stylesheet" type='text/css'>
+<link rel="stylesheet" type="text/css" href="{% static 'distance/style.css' %}" />
+<head>
+    <link rel="icon" href="{% url 'distance:favicon' %}" type="image/png">
+    <link rel="apple-touch-icon" href="{% url 'distance:favicon_apple' %}" type="image/png">
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<img src={% url "distance:logo" %} alt="" id="logo">
+<!--Script to show the information text on click-->
+<script>
+    function showInfoText() {
+        var infoText = document.getElementById('info-text');
+        if (infoText.style.display == "block")
+        {
+            infoText.style.display = "none";
+        }
+        else
+        {
+            infoText.style.display = "block";
+        }
+    }
+</script>
+<div id="info" onClick="showInfoText()">
+    <div id="info-i" class="button small-btn">i</div>
+    <div id="info-text" class="button">
+        <p>
+            Welcome to Here and There! You can friend your distant loved ones,
+            and make a homepage together where you can view your local times,
+            local weather, locations, send messages and link to background images
+            of you two for a slideshow!
+        </p>
+        <p>
+            Created by Erica Diaz. If you have any questions, email
+            hereandtherequestions@gmail.com.
+        </p>
+        <p>
+            Special thanks to pyowm (Python wrapper for OpenWeatherMap API)!
+        </p>
+    </div>
+</div>
+<!--Menu-->
+{% if user.is_authenticated %}
+    <img src="{% url 'distance:menu' %}" type="image/png" class="menu" id="menu">
+    <a href={% url 'distance:index' %} class="button menu-btn" id="home">HOME</a>
+    <a href={% url 'distance:view_messages' %} class="button menu-btn">MESSAGES ({{ num_msgs }})</a>
+    <div class="dropdown">
+        <a href={% url 'distance:friends' %} class="button dropbtn menu-btn">FRIENDS</a>
+        <div class="dropdown-content">
+            {% for friend in friends_list %}
+                <a href="{% url 'distance:friend_view' friend.id %}" class="button drop-user menu-btn">{{ friend.username }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <a href={% url 'distance:settings_view' %} class="button menu-btn">SETTINGS</a>
+    <a href={% url 'logout' %} class="button menu-btn">LOG OUT</a>
+    {% block more_links %}
+    {% endblock %}
+    <script>
+        var menu = document.getElementById("menu");
+        var menuBtns = document.getElementsByClassName("menu-btn");
+        var home = document.getElementById("home");
+        menu.onclick = function() {
+            if (home.style.display != "block")
+            {
+                // show buttons
+                for (var i = 0; i < menuBtns.length; i++)
+                {
+                    menuBtns[i].style.display = "block";
+                }
+                // rotate menu icon
+                menu.style.transform = "rotate(90deg)";
+                menu.style.transition = "all .12s";
+            }
+            else
+            {
+                //hide buttons
+                for (var i = 0; i < menuBtns.length; i++)
+                {
+                    menuBtns[i].style.display = "none";
+                }
+                //rotate menu icon back
+                menu.style.transform = "rotate(0deg)";
+                menu.style.transition = "all .12s";
+            }
+        }
+    </script>
+{% endif %}
+<!--Messages-->
+{% if messages %}
+    <div>
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+<!--Background image-->
+{% block images %}
+<img src={% url "distance:background" %} style="width:100%" alt="" class="background">
+{% endblock %}
+
+{% block content %}
+{% endblock %}

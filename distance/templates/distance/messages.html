@@ -1,0 +1,79 @@
+{% extends 'distance/base.html' %}
+
+{% block content %}
+<!--Messages page-->
+    <head>
+        <title>
+            Messages
+        </title>
+    </head>
+    <script>
+        // Show compose textbox
+        function ShowTextbox()
+        {
+            var textbox = document.getElementById("textbox");
+            if (textbox.style.display == "block")
+            {
+                textbox.style.display = "none";
+            }
+            else
+            {
+                textbox.style.display = "block";
+            }
+        }
+        // Show reply textbox
+        function ShowTextbox2(receiver)
+        {
+            var textbox = document.getElementById("textbox");
+            if (textbox.style.display == "block")
+            {
+                textbox.style.display = "none";
+            }
+            else
+            {
+                textbox.style.display = "block";
+                document.getElementById("receiver").value = receiver;
+            }
+        }
+    </script>
+    <h3>Messages:</h3>
+    <div onclick="ShowTextbox()"><img src={% url 'distance:compose' %} alt="" class="right-align white-background" id="compose"></div>
+    <div id="textbox">
+        <form method="POST" action={% url "distance:send_msg" %} class="white-background right-align"> {% csrf_token %}
+            <input type="text" name="receiver" required placeholder="To:" id="receiver"><br>
+            <textarea required placeholder="Enter message here..." name="msg" id="msg"></textarea><br>
+            <input type="submit" value= "Send" class="button small-btn right-align">
+        </form>
+    </div>
+    <!--Display messages. If it's a friend request, then have two options: Accept and-->
+    <!--X. If it's a normal message, then have two options: Reply and X.-->
+    {% if msg_list %}
+        <div class="signup msgs">
+            {% for msg in msg_list %}
+                {% if msg.msg_type == "FR" %}
+                    <form action={% url "distance:accept" %} method="post" class="white-background">{% csrf_token %}
+                        <div class="underline">{{ msg.sender }}: </div>
+                        <div class="indented">
+                            {{ msg.msg_content }}
+                            <div class="text-right">
+                                <input type="submit" value="Accept" class="button" name={{ msg.id }}>
+                                <input type="submit" value="X" class="button" name="{{ msg.id }}X">
+                            </div>
+                        </div>
+                    </form>
+                {% else %}
+                    <form method="post" action={% url "distance:accept" %} class="white-background">{% csrf_token %}
+                        <div class="underline">{{ msg.sender }}: </div>
+                        <div class="indented">
+                            {{ msg.msg_content }}
+                            <div class="text-right">
+                                <div class="button div-inline" id={{ msg.id }} onclick="ShowTextbox2(&quot;{{ msg.sender }}&quot;)">Reply</div>
+                                <input type="submit" value="X" class="button" name="{{ msg.id }}X">
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

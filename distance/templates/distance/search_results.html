@@ -1,0 +1,24 @@
+{% extends 'distance/base.html' %}
+
+{% block content %}
+<!--Search Results page-->
+<head>
+    <title>
+        Search Results
+    </title>
+</head>
+<!--Enable user to send a friend request to other users if they're not friends-->
+<!--already, and they haven't sent a friend request to them yet.-->
+<div class="form">
+    <form action={% url "distance:add_friend" %} method="post" class="white-background"> {% csrf_token %}
+        <input type="text" value={{ search }} name="friend_result" readonly class="readonly-textbox">
+        {% if already_friends %}
+        <input type="text" value="Already Friends" name="already_friends" readonly class="readonly-textbox">
+        {% elif pending %}
+        <input type="text" value="Pending" name="pending" readonly class="readonly-textbox">
+        {% else %}
+        <input type="submit" value="ADD FRIEND" class="button small-btn" id="add_friend">
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
